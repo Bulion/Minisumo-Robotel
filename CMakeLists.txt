@@ -33,7 +33,6 @@ include_directories(${HAL_DIR}/Inc)
 # Get all sources
 AUX_SOURCE_DIRECTORY(${HAL_DIR}/Src HAL_SOURCES)
 
-# The linker flag --gc-section keeps unused object code here from being linked.
 add_executable(${PROJ}
     ${SOURCE_DIR}/adc.c
     ${SOURCE_DIR}/dma.c
@@ -47,6 +46,7 @@ add_executable(${PROJ}
     ${SOURCE_DIR}/system_stm32f0xx.c
     ${SOURCE_DIR}/tim.c
     ${SOURCE_DIR}/usart.c
+    ${SOURCE_DIR}/ws2812.cpp
     ${STARTUP_DIR}/startup_stm32f091xc.s
     ${HAL_SOURCES}
 )
@@ -54,6 +54,8 @@ add_executable(${PROJ}
 set_target_properties(${PROJ} PROPERTIES SUFFIX ".elf")
 
 target_compile_definitions(${PROJ} PUBLIC
+    "__weak=__attribute__((weak))"
+    "__packed=__attribute__((__packed__))"
     USE_HAL_DRIVER
     STM32F091xC
 )
@@ -64,6 +66,10 @@ target_compile_options(${PROJ} PUBLIC
     -mno-thumb-interwork
     -mfpu=vfp
     -msoft-float
+    -Wall
+    -ffunction-sections
+    -fdata-sections
+    -O0
 )
 
 set(LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/STM32F091CBTx_FLASH${LINKER_SCRIPT_SUFFIX})
@@ -72,6 +78,8 @@ target_link_options(${PROJ} PUBLIC
     ${LINKER_OPTION} ${LINKER_SCRIPT}
     -specs=nano.specs
     -Wl,--gc-section
+    -mcpu=cortex-m0
+    -mthumb
 )
 
 # Generate assembly listing.
