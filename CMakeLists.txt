@@ -36,6 +36,7 @@ AUX_SOURCE_DIRECTORY(${HAL_DIR}/Src HAL_SOURCES)
 add_executable(${PROJ}
     ${SOURCE_DIR}/adc.c
     ${SOURCE_DIR}/dma.c
+    ${SOURCE_DIR}/encoder.cpp
     ${SOURCE_DIR}/gpio.c
     ${SOURCE_DIR}/i2c.c
     ${SOURCE_DIR}/main.cpp
@@ -61,6 +62,9 @@ target_compile_definitions(${PROJ} PUBLIC
 )
 
 target_compile_options(${PROJ} PUBLIC
+    $<$<COMPILE_LANGUAGE:CXX>:
+        -std=c++14
+    >
     -mcpu=cortex-m0
     -mthumb
     -mno-thumb-interwork
