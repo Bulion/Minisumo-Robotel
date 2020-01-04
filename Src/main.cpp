@@ -29,7 +29,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "kernel.h"
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,7 +105,11 @@ int main(void)
   MX_TIM17_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+  Encoder encLeft(&htim1, 12, 46, 10, 30);
+  Encoder encRight(&htim3, 12, 46, 10, 30);
 
+  Kernel::getInstance()->registerObserverToTimerInterrupt(&htim6, &encLeft);
+  Kernel::getInstance()->registerObserverToTimerInterrupt(&htim6, &encRight);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -161,7 +166,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  Kernel::getInstance()->timerInterruptNotification(htim);
+}
 /* USER CODE END 4 */
 
 /**

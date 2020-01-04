@@ -3,10 +3,9 @@
 #define M_PI 3.14159265358979323846  /* pi */
 
 Encoder::Encoder(TIM_HandleTypeDef *htim, uint16_t ticksPerRev, 
-                 uint16_t wheelDiameterInMM, uint16_t dt, 
-                 float gearRatio, uint32_t timerMaxValue): 
+                 uint16_t wheelDiameterInMM, float gearRatio,
+                 uint32_t timerMaxValue): 
       htim(htim)
-    , dt(dt)
     , timerOverrunValue(timerMaxValue / 2)
     , timerMaxValue(timerMaxValue)
     , ticksPerRev(ticksPerRev * gearRatio)
@@ -36,10 +35,10 @@ int32_t Encoder::getTicksDelta(const uint32_t currCntVal)
     return delta;
 }
 
-inline int32_t Encoder::calcRPM(const int32_t countedTicks)
+inline int32_t Encoder::calcRPM(const int32_t countedTicks, float dt)
 {
     const uint16_t msInMinute = 60000;
-    return (int32_t)(countedTicks * msInMinute) / (int32_t)(ticksPerRev * dt);
+    return (int32_t)(countedTicks * msInMinute) / (ticksPerRev * dt);
 }
 
 inline int32_t Encoder::calcSpeedInMMPS()
@@ -48,9 +47,9 @@ inline int32_t Encoder::calcSpeedInMMPS()
     return (currRPM * mmPerRev) / secInMinute;
 }
 
-void Encoder::update()
+void Encoder::update(float dt)
 {
     const int32_t countedTicks = getTicksDelta(htim->Instance->CNT);
-    currRPM = calcRPM(countedTicks);
+    currRPM = calcRPM(countedTicks, dt);
     currSpeedInMMPS = calcSpeedInMMPS();
 }

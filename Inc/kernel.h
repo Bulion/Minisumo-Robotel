@@ -1,18 +1,18 @@
 #ifndef __KERNEL_H
 #define __KERNEL_H
 
-#include <functional>
-#include <utility>
+#include <unordered_map>
 #include <vector>
 #include "tim.h"
+#include "observer.h"
 
 class Kernel {
 public:
     static Kernel* getInstance();
 
-    void registerCallbackToTimerInterrupt(TIM_HandleTypeDef *htim, 
-                                          std::function<void()> fcn);
-
+    void registerObserverToTimerInterrupt(TIM_HandleTypeDef *htim, 
+                                          TimerObserver *observer);
+    void timerInterruptNotification(TIM_HandleTypeDef *htim);
 
 private:
     Kernel();
@@ -20,8 +20,7 @@ private:
 
     static Kernel* instance;
 
-    std::vector< std::pair< TIM_HandleTypeDef*, 
-                            std::function<void()> > > timCallbacksVect;
+    std::unordered_map< TIM_HandleTypeDef*, std::vector< TimerObserver* > > timersObservers;
 };
 
 #endif

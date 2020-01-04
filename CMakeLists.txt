@@ -39,6 +39,7 @@ add_executable(${PROJ}
     ${SOURCE_DIR}/encoder.cpp
     ${SOURCE_DIR}/gpio.c
     ${SOURCE_DIR}/i2c.c
+    ${SOURCE_DIR}/kernel.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/stm32f0xx_hal_msp.c
     ${SOURCE_DIR}/stm32f0xx_it.c
