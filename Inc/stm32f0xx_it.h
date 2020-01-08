@@ -56,6 +56,7 @@ void DMA1_Ch1_IRQHandler(void);
 void DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler(void);
 void TIM6_DAC_IRQHandler(void);
 void TIM7_IRQHandler(void);
+void USART3_8_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

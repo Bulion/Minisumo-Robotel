@@ -29,6 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ws2812.hpp"
 #include "kernel.h"
 #include "encoder.h"
 /* USER CODE END Includes */
@@ -105,11 +106,26 @@ int main(void)
   MX_TIM17_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+  ws2812 test(&htim2, TIM_CHANNEL_1, 1);
+  test.setLedColor(0, 10, 10, 10);
+
+	HAL_TIM_PWM_Start(&htim15,TIM_CHANNEL_1);	//Lewe kolo
+	HAL_TIM_PWM_Start(&htim17,TIM_CHANNEL_1);	//Prawe kolo
+	htim15.Instance->CCR1 = 0;
+	htim17.Instance->CCR1 = 0;
+	// HAL_GPIO_WritePin(B1_INB_GPIO_Port,B1_INB_Pin,GPIO_PIN_SET);  //To jest do przodu prawe
+	HAL_GPIO_WritePin(B2_INA_GPIO_Port,B2_INA_Pin,GPIO_PIN_SET); //To jest do przodu lewe
+	HAL_GPIO_WritePin(B1_INA_GPIO_Port,B1_INA_Pin,GPIO_PIN_SET);
+
   Encoder encLeft(&htim1, 12, 46, 10, 30);
   Encoder encRight(&htim3, 12, 46, 10, 30);
 
   Kernel::getInstance()->registerObserverToTimerInterrupt(&htim6, &encLeft);
   Kernel::getInstance()->registerObserverToTimerInterrupt(&htim6, &encRight);
+
+  HAL_TIM_Base_Start_IT(&htim6);
+  uint8_t testStr[] = "no elo";
+  HAL_UART_Receive_IT(&huart3, testStr, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,6 +135,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    HAL_UART_Transmit(&huart3,testStr, 6, 100);
+    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -170,6 +188,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   Kernel::getInstance()->timerInterruptNotification(htim);
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  static uint8_t test = 0;
+  HAL_UART_Receive_IT(&huart3, &test, 1);
+}
+
 /* USER CODE END 4 */
 
 /**
