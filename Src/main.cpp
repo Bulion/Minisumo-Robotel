@@ -29,6 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "ws2812.hpp"
 #include "kernel.h"
 #include "encoder.h"
@@ -124,8 +125,6 @@ int main(void)
   Kernel::getInstance()->registerObserverToTimerInterrupt(&htim6, &encRight);
 
   HAL_TIM_Base_Start_IT(&htim6);
-  uint8_t testStr[] = "no elo";
-  HAL_UART_Receive_IT(&huart3, testStr, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -135,8 +134,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_UART_Transmit(&huart3,testStr, 6, 100);
-    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }

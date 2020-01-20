@@ -107,7 +107,34 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+    return ch;
+}
 
+int _write(int file, char *ptr, int len)
+{
+    UNUSED(file);
+    if(ptr[len-1] == '\n')
+    {
+        HAL_UART_Transmit(&huart3, (uint8_t *)ptr, len, 0xFFFF);
+    }
+    else
+    {
+        int i = 0;
+        for(i = 0; i < len; ++i)
+        {
+            if(i+1 >= len && *ptr =='\n')
+            {
+                __io_putchar('\r');
+            }
+            __io_putchar(*ptr++);
+        }
+    }
+    
+    return len;
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
